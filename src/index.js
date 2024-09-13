@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlContainer = document.getElementById('urlContainer');
     const addUrlBtn = document.getElementById('addUrlBtn');
     const vCardText = document.getElementById('vCardText');
-    const generateBtn = document.getElementById('generateBtn');
     const qrcodeDiv = document.getElementById('qrcode');
     const downloadPNGBtn = document.getElementById('downloadPNG');
     const downloadSVGBtn = document.getElementById('downloadSVG');
@@ -27,21 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add event listeners for input fields
     [nameInput, phoneInput, emailInput, orgInput].forEach(input => {
-        input.addEventListener('input', updateVCard);
+        input.addEventListener('input', updateVCardAndQR);
     });
 
     addUrlBtn.addEventListener('click', addUrlField);
-    urlContainer.addEventListener('input', updateVCard);
+    urlContainer.addEventListener('input', updateVCardAndQR);
     urlContainer.addEventListener('click', handleUrlContainerClick);
-
-    generateBtn.addEventListener('click', () => {
-        const text = vCardText.value;
-        if (text) {
-            currentQRText = text;
-            generateQRCode(text);
-            enableDownloadButtons(true);
-        }
-    });
 
     downloadPNGBtn.addEventListener('click', () => downloadQRCode('png'));
     downloadSVGBtn.addEventListener('click', () => downloadQRCode('svg'));
@@ -61,20 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
         urlGroup.className = 'url-group';
         urlGroup.innerHTML = `
             <input type="url" class="urlInput" placeholder="URL">
-            <button class="removeUrlBtn">-</button>
+            <button class="url-btn removeUrlBtn">-</button>
         `;
         urlContainer.appendChild(urlGroup);
-        updateVCard();
+        updateVCardAndQR();
     }
 
     function handleUrlContainerClick(event) {
         if (event.target.classList.contains('removeUrlBtn')) {
             event.target.closest('.url-group').remove();
-            updateVCard();
+            updateVCardAndQR();
         }
     }
 
-    function updateVCard() {
+    function updateVCardAndQR() {
         const name = nameInput.value;
         const phone = phoneInput.value;
         const email = emailInput.value;
@@ -92,6 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
         vCardContent += 'END:VCARD';
 
         vCardText.value = vCardContent;
+        currentQRText = vCardContent;
+        generateQRCode(vCardContent);
+        enableDownloadButtons(true);
     }
 
     function createEmptyCanvas() {
