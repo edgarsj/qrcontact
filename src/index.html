@@ -44,6 +44,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            margin: 0 5px;
         }
 
         button:hover {
@@ -57,6 +58,10 @@
             display: inline-block;
             border-radius: 4px;
         }
+
+        #downloadButtons {
+            margin-top: 1rem;
+        }
     </style>
 </head>
 
@@ -66,6 +71,10 @@
         <textarea id="inputText" placeholder="Enter text or URL here"></textarea>
         <button id="generateBtn">Generate QR Code</button>
         <div id="qrcode"></div>
+        <div id="downloadButtons" style="display: none;">
+            <button id="downloadPNG">Download PNG</button>
+            <button id="downloadSVG">Download SVG</button>
+        </div>
     </div>
 </body>
 
