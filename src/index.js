@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const phoneInput = document.getElementById('phoneInput');
     const emailInput = document.getElementById('emailInput');
     const orgInput = document.getElementById('orgInput');
+    const urlContainer = document.getElementById('urlContainer');
+    const addUrlBtn = document.getElementById('addUrlBtn');
     const vCardText = document.getElementById('vCardText');
     const generateBtn = document.getElementById('generateBtn');
     const qrcodeDiv = document.getElementById('qrcode');
@@ -12,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadSVGBtn = document.getElementById('downloadSVG');
     const infoToggle = document.getElementById('infoToggle');
     const infoContent = document.getElementById('infoContent');
+    const debugToggle = document.getElementById('debugToggle');
 
     const QR_SIZE = 400;
     const PADDING = 16; // 1rem padding on each side
@@ -26,6 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     [nameInput, phoneInput, emailInput, orgInput].forEach(input => {
         input.addEventListener('input', updateVCard);
     });
+
+    addUrlBtn.addEventListener('click', addUrlField);
+    urlContainer.addEventListener('input', updateVCard);
+    urlContainer.addEventListener('click', handleUrlContainerClick);
 
     generateBtn.addEventListener('click', () => {
         const text = vCardText.value;
@@ -44,17 +51,44 @@ document.addEventListener('DOMContentLoaded', () => {
         infoToggle.textContent = infoContent.style.display === 'none' ? 'ℹ️ How it works (click to expand)' : 'ℹ️ How it works (click to collapse)';
     });
 
+    debugToggle.addEventListener('click', () => {
+        vCardText.style.display = vCardText.style.display === 'none' ? 'block' : 'none';
+        debugToggle.textContent = vCardText.style.display === 'none' ? '🐞 Debug Mode (click to toggle)' : '🐞 Debug Mode (click to hide)';
+    });
+
+    function addUrlField() {
+        const urlGroup = document.createElement('div');
+        urlGroup.className = 'url-group';
+        urlGroup.innerHTML = `
+            <input type="url" class="urlInput" placeholder="URL">
+            <button class="removeUrlBtn">-</button>
+        `;
+        urlContainer.appendChild(urlGroup);
+        updateVCard();
+    }
+
+    function handleUrlContainerClick(event) {
+        if (event.target.classList.contains('removeUrlBtn')) {
+            event.target.closest('.url-group').remove();
+            updateVCard();
+        }
+    }
+
     function updateVCard() {
         const name = nameInput.value;
         const phone = phoneInput.value;
         const email = emailInput.value;
         const org = orgInput.value;
+        const urls = Array.from(urlContainer.querySelectorAll('.urlInput')).map(input => input.value).filter(Boolean);
 
         let vCardContent = 'BEGIN:VCARD\nVERSION:3.0\n';
         if (name) vCardContent += `FN:${name}\n`;
         if (phone) vCardContent += `TEL:${phone}\n`;
         if (email) vCardContent += `EMAIL:${email}\n`;
         if (org) vCardContent += `ORG:${org}\n`;
+        urls.forEach(url => {
+            vCardContent += `URL:${url}\n`;
+        });
         vCardContent += 'END:VCARD';
 
         vCardText.value = vCardContent;
