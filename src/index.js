@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const phoneInput = document.getElementById('phoneInput');
     const emailInput = document.getElementById('emailInput');
     const orgInput = document.getElementById('orgInput');
+    const titleInput = document.getElementById('titleInput');
     const urlContainer = document.getElementById('urlContainer');
     const addUrlBtn = document.getElementById('addUrlBtn');
     const vCardText = document.getElementById('vCardText');
@@ -36,21 +37,29 @@ document.addEventListener('DOMContentLoaded', () => {
     downloadPNGBtn.addEventListener('click', () => downloadQRCode('png'));
     downloadSVGBtn.addEventListener('click', () => downloadQRCode('svg'));
 
+    // infoToggle.addEventListener('click', () => {
+    //     infoContent.style.display = infoContent.style.display === 'none' ? 'block' : 'none';
+    //     infoToggle.textContent = infoContent.style.display === 'none' ? 'ℹ️ How it works (click to expand)' : 'ℹ️ How it works (click to collapse)';
+    // });
+
+    // debugToggle.addEventListener('click', () => {
+    //     vCardText.style.display = vCardText.style.display === 'none' ? 'block' : 'none';
+    //     debugToggle.textContent = vCardText.style.display === 'none' ? '🐞 Debug Mode (click to toggle)' : '🐞 Debug Mode (click to hide)';
+    // });
+    // Replace the existing event listeners for infoToggle and debugToggle with these:
+
     infoToggle.addEventListener('click', () => {
         infoContent.style.display = infoContent.style.display === 'none' ? 'block' : 'none';
-        infoToggle.textContent = infoContent.style.display === 'none' ? 'ℹ️ How it works (click to expand)' : 'ℹ️ How it works (click to collapse)';
     });
 
     debugToggle.addEventListener('click', () => {
         vCardText.style.display = vCardText.style.display === 'none' ? 'block' : 'none';
-        debugToggle.textContent = vCardText.style.display === 'none' ? '🐞 Debug Mode (click to toggle)' : '🐞 Debug Mode (click to hide)';
     });
-
     function addUrlField() {
         const urlGroup = document.createElement('div');
         urlGroup.className = 'url-group';
         urlGroup.innerHTML = `
-            <input type="url" class="urlInput" placeholder="URL">
+            <input type="url" class="urlInput" placeholder="URL (homepage or social network link)">
             <button class="url-btn removeUrlBtn">-</button>
         `;
         urlContainer.appendChild(urlGroup);
@@ -69,22 +78,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const phone = phoneInput.value;
         const email = emailInput.value;
         const org = orgInput.value;
+        const title = titleInput.value;
         const urls = Array.from(urlContainer.querySelectorAll('.urlInput')).map(input => input.value).filter(Boolean);
 
-        let vCardContent = 'BEGIN:VCARD\nVERSION:3.0\n';
+        //let vCardContent = 'BEGIN:VCARD\nVERSION:3.0\n';
+        let vCardContent = '';
         if (name) vCardContent += `FN:${name}\n`;
         if (phone) vCardContent += `TEL:${phone}\n`;
         if (email) vCardContent += `EMAIL:${email}\n`;
         if (org) vCardContent += `ORG:${org}\n`;
+        if (title) vCardContent += `TITLE: ${title}\n`;
         urls.forEach(url => {
             vCardContent += `URL:${url}\n`;
         });
-        vCardContent += 'END:VCARD';
+        //vCardContent += 'END:VCARD';
 
-        vCardText.value = vCardContent;
-        currentQRText = vCardContent;
-        generateQRCode(vCardContent);
-        enableDownloadButtons(true);
+        if (vCardContent) {
+            vCardContent = 'BEGIN:VCARD\nVERSION:3.0\n' + vCardContent + 'END:VCARD';
+            vCardText.value = vCardContent;
+            currentQRText = vCardContent;
+            generateQRCode(currentQRText);
+            enableDownloadButtons(true);
+        } else {
+            enableDownloadButtons(false);
+            currentQRText = '';
+            generateQRCode(currentQRText);
+        }
     }
 
     function createEmptyCanvas() {
