@@ -1,11 +1,17 @@
 import QRCode from 'qrcode';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const inputText = document.getElementById('inputText');
+    const nameInput = document.getElementById('nameInput');
+    const phoneInput = document.getElementById('phoneInput');
+    const emailInput = document.getElementById('emailInput');
+    const orgInput = document.getElementById('orgInput');
+    const vCardText = document.getElementById('vCardText');
     const generateBtn = document.getElementById('generateBtn');
     const qrcodeDiv = document.getElementById('qrcode');
     const downloadPNGBtn = document.getElementById('downloadPNG');
     const downloadSVGBtn = document.getElementById('downloadSVG');
+    const infoToggle = document.getElementById('infoToggle');
+    const infoContent = document.getElementById('infoContent');
 
     const QR_SIZE = 400;
     const PADDING = 16; // 1rem padding on each side
@@ -16,8 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Create empty canvas on page load
     createEmptyCanvas();
 
+    // Add event listeners for input fields
+    [nameInput, phoneInput, emailInput, orgInput].forEach(input => {
+        input.addEventListener('input', updateVCard);
+    });
+
     generateBtn.addEventListener('click', () => {
-        const text = inputText.value;
+        const text = vCardText.value;
         if (text) {
             currentQRText = text;
             generateQRCode(text);
@@ -27,6 +38,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     downloadPNGBtn.addEventListener('click', () => downloadQRCode('png'));
     downloadSVGBtn.addEventListener('click', () => downloadQRCode('svg'));
+
+    infoToggle.addEventListener('click', () => {
+        infoContent.style.display = infoContent.style.display === 'none' ? 'block' : 'none';
+        infoToggle.textContent = infoContent.style.display === 'none' ? 'ℹ️ How it works (click to expand)' : 'ℹ️ How it works (click to collapse)';
+    });
+
+    function updateVCard() {
+        const name = nameInput.value;
+        const phone = phoneInput.value;
+        const email = emailInput.value;
+        const org = orgInput.value;
+
+        let vCardContent = 'BEGIN:VCARD\nVERSION:3.0\n';
+        if (name) vCardContent += `FN:${name}\n`;
+        if (phone) vCardContent += `TEL:${phone}\n`;
+        if (email) vCardContent += `EMAIL:${email}\n`;
+        if (org) vCardContent += `ORG:${org}\n`;
+        vCardContent += 'END:VCARD';
+
+        vCardText.value = vCardContent;
+    }
 
     function createEmptyCanvas() {
         const canvas = document.createElement('canvas');
