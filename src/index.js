@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const QR_SIZE = 400;
     const PADDING = 16; // 1rem padding on each side
+    const QR_BACKGROUND_COLOR = '#f0f0f0';
+    const QR_FOREGROUND_COLOR = '#4a0e4e';
     let currentQRText = '';
 
     // Create empty canvas on page load
@@ -31,12 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.width = QR_SIZE;
         canvas.height = QR_SIZE;
         const ctx = canvas.getContext('2d');
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = QR_BACKGROUND_COLOR;
         ctx.fillRect(0, 0, QR_SIZE, QR_SIZE);
         qrcodeDiv.innerHTML = '';
         qrcodeDiv.appendChild(canvas);
         qrcodeDiv.style.width = `${QR_SIZE + PADDING * 2}px`;
         qrcodeDiv.style.height = `${QR_SIZE + PADDING * 2}px`;
+        qrcodeDiv.style.backgroundColor = QR_BACKGROUND_COLOR;
     }
 
     function generateQRCode(text) {
@@ -44,7 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const canvas = document.createElement('canvas');
         qrcodeDiv.appendChild(canvas);
 
-        QRCode.toCanvas(canvas, text, { width: QR_SIZE }, (error) => {
+        QRCode.toCanvas(canvas, text, {
+            width: QR_SIZE,
+            margin: 1,
+            color: {
+                dark: QR_FOREGROUND_COLOR,
+                light: QR_BACKGROUND_COLOR
+            }
+        }, (error) => {
             if (error) console.error(error);
             console.log('QR code generated!');
         });
@@ -71,7 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 URL.revokeObjectURL(url);
             }, mimeType);
         } else {
-            QRCode.toString(currentQRText, { type: 'svg', width: QR_SIZE }, (err, svgString) => {
+            QRCode.toString(currentQRText, {
+                type: 'svg',
+                width: QR_SIZE,
+                margin: 1,
+                color: {
+                    dark: QR_FOREGROUND_COLOR,
+                    light: QR_BACKGROUND_COLOR
+                }
+            }, (err, svgString) => {
                 if (err) {
                     console.error(err);
                     return;
