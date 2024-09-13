@@ -4,33 +4,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputText = document.getElementById('inputText');
     const generateBtn = document.getElementById('generateBtn');
     const qrcodeDiv = document.getElementById('qrcode');
-    const downloadButtons = document.getElementById('downloadButtons');
     const downloadPNGBtn = document.getElementById('downloadPNG');
     const downloadSVGBtn = document.getElementById('downloadSVG');
 
+    const QR_SIZE = 400;
+    const PADDING = 16; // 1rem padding on each side
     let currentQRText = '';
+
+    // Create empty canvas on page load
+    createEmptyCanvas();
 
     generateBtn.addEventListener('click', () => {
         const text = inputText.value;
         if (text) {
             currentQRText = text;
             generateQRCode(text);
-            downloadButtons.style.display = 'block';
+            enableDownloadButtons(true);
         }
     });
 
     downloadPNGBtn.addEventListener('click', () => downloadQRCode('png'));
     downloadSVGBtn.addEventListener('click', () => downloadQRCode('svg'));
 
+    function createEmptyCanvas() {
+        const canvas = document.createElement('canvas');
+        canvas.width = QR_SIZE;
+        canvas.height = QR_SIZE;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, QR_SIZE, QR_SIZE);
+        qrcodeDiv.innerHTML = '';
+        qrcodeDiv.appendChild(canvas);
+        qrcodeDiv.style.width = `${QR_SIZE + PADDING * 2}px`;
+        qrcodeDiv.style.height = `${QR_SIZE + PADDING * 2}px`;
+    }
+
     function generateQRCode(text) {
         qrcodeDiv.innerHTML = '';
         const canvas = document.createElement('canvas');
         qrcodeDiv.appendChild(canvas);
 
-        QRCode.toCanvas(canvas, text, { width: 200 }, (error) => {
+        QRCode.toCanvas(canvas, text, { width: QR_SIZE }, (error) => {
             if (error) console.error(error);
             console.log('QR code generated!');
         });
+    }
+
+    function enableDownloadButtons(enable) {
+        downloadPNGBtn.disabled = !enable;
+        downloadSVGBtn.disabled = !enable;
     }
 
     function downloadQRCode(format) {
@@ -49,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 URL.revokeObjectURL(url);
             }, mimeType);
         } else {
-            QRCode.toString(currentQRText, { type: 'svg' }, (err, svgString) => {
+            QRCode.toString(currentQRText, { type: 'svg', width: QR_SIZE }, (err, svgString) => {
                 if (err) {
                     console.error(err);
                     return;
