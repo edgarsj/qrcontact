@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((input) => input.value)
       .filter(Boolean);
 
-    //let vCardContent = 'BEGIN:VCARD\nVERSION:3.0\n';
     let vCardContent = "";
     if (name) vCardContent += `FN:${name}\n`;
     if (phone) vCardContent += `TEL:${phone}\n`;
@@ -104,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
     urls.forEach((url) => {
       vCardContent += `URL:${url}\n`;
     });
-    //vCardContent += 'END:VCARD';
 
     if (vCardContent) {
       vCardContent = "BEGIN:VCARD\nVERSION:3.0\n" + vCardContent + "END:VCARD";
