@@ -217,6 +217,14 @@ footer {
     height: auto;
     display: block;
     margin: 0 auto;
+    position: relative;
+}
+
+.header-logo {
+    height: 3rem;
+    width: 3rem;
+    vertical-align: middle;
+    margin-right: 0.5rem;
 }
 
 .color-content {

@@ -1,11 +1,15 @@
-import QRCode from "qrcode";
-import latinize from 'latinize';
-import './styles.css';
 import './assets/favicon.ico';
 import './assets/apple-touch-icon.png';
 import './assets/web-app-manifest-192x192.png';
 import './assets/web-app-manifest-512x512.png';
 import './assets/site.webmanifest';
+import './assets/logo.svg';
+
+import QRCode from "qrcode";
+import latinize from 'latinize';
+
+import './styles.css';
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -218,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
       text,
       {
         width: currentSize,
-        margin: 1,
+        margin: 0,
         color: {
           dark: QR_FOREGROUND_COLOR,
           light: QR_BACKGROUND_COLOR,
@@ -266,12 +270,43 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         });
 
-        // Add watermark
+        // Add logo and watermark as a group
         ctx.font = '12px Consolas, "Courier New", monospace';
-        // ctx.fillStyle = "#222"; // Dark but not black
         ctx.fillStyle = QR_FOREGROUND_COLOR;
         ctx.textAlign = "right";
-        ctx.fillText("cardqr.me", finalCanvas.width - PADDING - 2, finalCanvas.height - PADDING);
+        ctx.save(); // Save current context state
+
+        // Draw logo
+        //const logoImg = new Image();
+        fetch('assets/logo.svg')
+          .then(response => response.text())
+          .then(svgText => {
+            // Replace the color variable
+            const coloredSvg = svgText.replace('currentColor', QR_FOREGROUND_COLOR);
+
+            // Create a Blob with the modified SVG
+            const blob = new Blob([coloredSvg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+
+            const logoImg = new Image();
+            logoImg.onload = () => {
+              const logoSize = 18;
+              const spacing = 2;
+              const textY = finalCanvas.height - PADDING;
+              const logoY = textY - logoSize + 5;
+              const logoX = finalCanvas.width - PADDING - 2 - ctx.measureText("cardqr.me").width - logoSize - spacing;
+
+              ctx.fillStyle = QR_FOREGROUND_COLOR;
+              ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+
+              ctx.fillText("cardqr.me", finalCanvas.width - PADDING - 2, textY);
+
+              // Clean up the blob URL
+              URL.revokeObjectURL(url);
+            };
+            logoImg.src = url;
+          })
+          .catch(error => console.error('Error loading logo:', error));
 
         // Replace old canvas with new one
         qrcodeDiv.innerHTML = "";
