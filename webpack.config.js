@@ -7,7 +7,8 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.[contenthash].js',
-        clean: true
+        clean: true,
+        assetModuleFilename: 'assets/[name][ext]'
     },
     module: {
         rules: [
@@ -17,6 +18,13 @@ module.exports = {
                     MiniCssExtractPlugin.loader, // Extracts CSS into separate files
                     'css-loader' // Translates CSS into CommonJS
                 ]
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif|ico|webmanifest)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'assets/[name][ext]'
+                }
             }
         ]
     },
@@ -26,6 +34,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: './src/index.html',
+            favicon: path.resolve(__dirname, 'src/assets/favicon.ico'),
             minify: {
                 collapseWhitespace: true,
                 removeComments: true,

@@ -1,6 +1,11 @@
 import QRCode from "qrcode";
 import latinize from 'latinize';
 import './styles.css';
+import './assets/favicon.ico';
+import './assets/apple-touch-icon.png';
+import './assets/web-app-manifest-192x192.png';
+import './assets/web-app-manifest-512x512.png';
+import './assets/site.webmanifest';
 
 document.addEventListener("DOMContentLoaded", () => {
 
