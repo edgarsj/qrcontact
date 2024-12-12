@@ -51,6 +51,12 @@ document.addEventListener("DOMContentLoaded", () => {
       infoContent.style.display === "none" ? "block" : "none";
   });
 
+  const infoClose = document.getElementById("infoClose");
+
+  infoClose.addEventListener("click", () => {
+    infoContent.style.display = "none";
+  });
+
   debugToggle.addEventListener("click", () => {
     vCardText.style.display =
       vCardText.style.display === "none" ? "block" : "none";

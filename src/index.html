@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Share Your Contact Information via Phone</title>
+        <title>CardQR.me | Share Your Contact Information via Phone</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -100,6 +100,53 @@
                 padding: 15px;
                 border-radius: 4px;
                 margin-bottom: 20px;
+                position: relative;
+            }
+            .toggle-btn {
+                background: none;
+                border: none;
+                color: #4a0e4e;
+                cursor: pointer;
+                font-size: 1em;
+                padding: 5px 0;
+                text-align: left;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .toggle-btn:hover {
+                opacity: 0.8;
+                transition: opacity 0.2s ease;
+            }
+
+            .info-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+            }
+
+            .info-header h3 {
+                margin: 0;
+            }
+
+
+            .close-btn {
+                background: none;
+                border: none;
+                color: #4a0e4e;
+                cursor: pointer;
+                padding: 4px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .close-btn:hover {
+                opacity: 0.8;
+                transition: opacity 0.2s ease;
             }
 
             .button-group {
@@ -187,9 +234,23 @@
         <div class="container">
             <h1>Share Your Contact Information via Phone as a QR Image</h1>
 
-            <button id="infoToggle" class="toggle-btn">How it works</button>
-            <div id="infoContent" class="info-content" style="display: none">
-                <h3>How a QR vCard works:</h3>
+            <button id="infoToggle" class="toggle-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                About QR vCard images
+            </button>
+            <div id="infoContent" class="info-content">
+                <div class="info-header">
+                    <h3>How QR vCards Work</h3>
+                    <button id="infoClose" class="close-btn" aria-label="Close info section">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                </div>                
                 <p>
                     A QR vCard is a Quick Response code that contains your
                     contact information in a standardized format called vCard.
