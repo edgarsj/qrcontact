@@ -2,6 +2,7 @@ import QRCode from "qrcode";
 import './styles.css';
 
 document.addEventListener("DOMContentLoaded", () => {
+
   function getOptimalQRSize() {
     const screenWidth = window.innerWidth;
     // For mobile devices, make QR code smaller
@@ -99,6 +100,32 @@ document.addEventListener("DOMContentLoaded", () => {
       generateQRCode(currentQRText);
     });
   });
+
+  function sanitizeFileName(text) {
+    // Remove special characters and replace spaces with underscores
+    return text
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+      .replace(/\s+/g, '_')         // Replace spaces with underscores
+      .replace(/-+/g, '_')          // Replace hyphens with underscores
+      .replace(/_+/g, '_')          // Replace multiple underscores with single
+      .trim();
+  }
+
+  function generateFileName(format) {
+    const name = nameInput.value.trim();
+    const org = orgInput.value.trim();
+    let filename = 'qr_code';
+
+    if (name) {
+      filename = sanitizeFileName(name);
+      if (org) {
+        filename += '_' + sanitizeFileName(org);
+      }
+    }
+
+    return `${filename}_qr.${format}`;
+  }
 
   function addUrlField() {
     const urlGroup = document.createElement("div");
@@ -252,7 +279,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function downloadQRCode(format) {
     if (!currentQRText) return;
 
-    const filename = `qrcode.${format}`;
+    const filename = generateFileName(format);
     const mimeType = format === "png" ? "image/png" : "image/svg+xml";
 
     if (format === "png") {
