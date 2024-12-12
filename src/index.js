@@ -155,8 +155,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.createElement("canvas");
     const TEXT_HEIGHT = 130; // Space for contact text
     const currentSize = getOptimalQRSize();
-    canvas.width = currentSize;
-    canvas.height = currentSize + TEXT_HEIGHT;
+    // Include padding in canvas dimensions
+    canvas.width = currentSize + (PADDING * 2);
+    canvas.height = currentSize + TEXT_HEIGHT + (PADDING * 2);
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = QR_BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -165,7 +166,8 @@ document.addEventListener("DOMContentLoaded", () => {
     qrcodeDiv.style.width = `${currentSize + PADDING * 2}px`;
     qrcodeDiv.style.height = `${currentSize + TEXT_HEIGHT + PADDING * 2}px`;
     qrcodeDiv.style.backgroundColor = QR_BACKGROUND_COLOR;
-    qrcodeDiv.style.padding = `${PADDING}px`;
+    // Remove padding from container since it's now part of the canvas
+    qrcodeDiv.style.padding = '0';
   }
 
   function generateQRCode(text) {
@@ -191,8 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Create final canvas
         const finalCanvas = document.createElement("canvas");
-        finalCanvas.width = currentSize;
-        finalCanvas.height = currentSize + TEXT_HEIGHT;
+        finalCanvas.width = currentSize + (PADDING * 2);
+        finalCanvas.height = currentSize + TEXT_HEIGHT + (PADDING * 2);
         const ctx = finalCanvas.getContext("2d");
 
         // Draw background
@@ -200,17 +202,17 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
 
         // Draw QR code
-        ctx.drawImage(tempCanvas, 0, 0);
+        ctx.drawImage(tempCanvas, PADDING, PADDING);
 
         // Draw text
         ctx.fillStyle = QR_FOREGROUND_COLOR;
         ctx.textAlign = "center";
-        let y = currentSize + PADDING;
+        let y = currentSize + (PADDING * 2);
 
         const name = nameInput.value;
         if (name) {
           ctx.font = "bold 18px Arial";
-          ctx.fillText(name, currentSize / 2, y + 16);
+          ctx.fillText(name, finalCanvas.width / 2, y + 16);
           y += 44;
         }
 
@@ -223,16 +225,17 @@ document.addEventListener("DOMContentLoaded", () => {
         ];
         fields.forEach((field) => {
           if (field) {
-            ctx.fillText(field, currentSize / 2, y);
+            ctx.fillText(field, finalCanvas.width / 2, y);
             y += 22;
           }
         });
 
         // Add watermark
         ctx.font = '12px Consolas, "Courier New", monospace';
-        ctx.fillStyle = "#222"; // Dark but not black
+        // ctx.fillStyle = "#222"; // Dark but not black
+        ctx.fillStyle = QR_FOREGROUND_COLOR;
         ctx.textAlign = "right";
-        ctx.fillText("cardqr.me", currentSize - 2, currentSize + TEXT_HEIGHT - 2);
+        ctx.fillText("cardqr.me", finalCanvas.width - PADDING - 2, finalCanvas.height - PADDING);
 
         // Replace old canvas with new one
         qrcodeDiv.innerHTML = "";
