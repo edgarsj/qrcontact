@@ -1,4 +1,5 @@
 import QRCode from "qrcode";
+import latinize from 'latinize';
 import './styles.css';
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -102,8 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function sanitizeFileName(text) {
-    // Remove special characters and replace spaces with underscores
-    return text
+    // First transliterate using latinize
+    const latinized = latinize(text);
+
+    // Then sanitize the result
+    return latinized
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
       .replace(/\s+/g, '_')         // Replace spaces with underscores
