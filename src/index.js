@@ -1,5 +1,7 @@
 import QRCode from "qrcode";
 
+import './styles.css';
+
 document.addEventListener("DOMContentLoaded", () => {
   function getOptimalQRSize() {
     const screenWidth = window.innerWidth;
