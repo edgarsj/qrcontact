@@ -1,5 +1,4 @@
 import QRCode from "qrcode";
-
 import './styles.css';
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -26,11 +25,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const infoToggle = document.getElementById("infoToggle");
   const infoContent = document.getElementById("infoContent");
   const debugToggle = document.getElementById("debugToggle");
+  const colorToggle = document.getElementById("colorToggle");
+  const colorContent = document.getElementById("colorContent");
+  const colorSchemes = document.querySelectorAll(".color-scheme");
 
   const QR_SIZE = getOptimalQRSize();
   const PADDING = 16; // 1rem padding on each side
-  const QR_BACKGROUND_COLOR = "#f0f0f0";
-  const QR_FOREGROUND_COLOR = "#4a0e4e";
+  let QR_BACKGROUND_COLOR = "#f0f0f0";
+  let QR_FOREGROUND_COLOR = "#4a0e4e";
   let currentQRText = "";
 
   // Create empty canvas on page load
@@ -48,21 +50,56 @@ document.addEventListener("DOMContentLoaded", () => {
   downloadPNGBtn.addEventListener("click", () => downloadQRCode("png"));
   downloadSVGBtn.addEventListener("click", () => downloadQRCode("svg"));
 
+  // Toggle sections
   infoToggle.addEventListener("click", () => {
     infoContent.style.display =
       infoContent.style.display === "none" ? "block" : "none";
   });
 
-  const infoClose = document.getElementById("infoClose");
-
-  infoClose.addEventListener("click", () => {
-    infoContent.style.display = "none";
+  colorToggle.addEventListener("click", () => {
+    colorContent.style.display =
+      colorContent.style.display === "none" ? "block" : "none";
   });
 
   debugToggle.addEventListener("click", () => {
     vCardText.style.display =
       vCardText.style.display === "none" ? "block" : "none";
   });
+
+  const infoClose = document.getElementById("infoClose");
+  infoClose.addEventListener("click", () => {
+    infoContent.style.display = "none";
+  });
+
+  // Set initial active color scheme
+  const setInitialActiveScheme = () => {
+    const defaultScheme = document.querySelector(
+      `.color-scheme[data-bg="${QR_BACKGROUND_COLOR}"][data-fg="${QR_FOREGROUND_COLOR}"]`
+    );
+    if (defaultScheme) {
+      defaultScheme.classList.add("active");
+    }
+  };
+  setInitialActiveScheme();
+
+  // Handle color scheme selection
+  colorSchemes.forEach(scheme => {
+    scheme.addEventListener("click", () => {
+      // Remove active class from all schemes
+      colorSchemes.forEach(s => s.classList.remove("active"));
+      // Add active class to selected scheme
+      scheme.classList.add("active");
+
+      // Update colors
+      QR_BACKGROUND_COLOR = scheme.dataset.bg;
+      QR_FOREGROUND_COLOR = scheme.dataset.fg;
+      qrcodeDiv.style.backgroundColor = QR_BACKGROUND_COLOR;
+
+      // Regenerate QR code with new colors
+      generateQRCode(currentQRText);
+    });
+  });
+
   function addUrlField() {
     const urlGroup = document.createElement("div");
     urlGroup.className = "url-group";
@@ -110,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       enableDownloadButtons(false);
       currentQRText = "";
-      generateQRCode(currentQRText);
+      createEmptyCanvas();
     }
   }
 
@@ -128,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
     qrcodeDiv.style.width = `${currentSize + PADDING * 2}px`;
     qrcodeDiv.style.height = `${currentSize + TEXT_HEIGHT + PADDING * 2}px`;
     qrcodeDiv.style.backgroundColor = QR_BACKGROUND_COLOR;
+    qrcodeDiv.style.padding = `${PADDING}px`;
   }
 
   function generateQRCode(text) {
@@ -194,12 +232,12 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.font = '12px Consolas, "Courier New", monospace';
         ctx.fillStyle = "#222"; // Dark but not black
         ctx.textAlign = "right";
-        ctx.fillText("cardqr.me", currentSize - 2, currentSize + TEXT_HEIGHT - 2); // Position at bottom right with 6px padding        
+        ctx.fillText("cardqr.me", currentSize - 2, currentSize + TEXT_HEIGHT - 2);
 
         // Replace old canvas with new one
         qrcodeDiv.innerHTML = "";
         qrcodeDiv.appendChild(finalCanvas);
-      },
+      }
     );
   }
 
@@ -244,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const url = URL.createObjectURL(blob);
           downloadFile(url, filename);
           URL.revokeObjectURL(url);
-        },
+        }
       );
     }
   }
