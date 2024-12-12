@@ -46,17 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
   downloadPNGBtn.addEventListener("click", () => downloadQRCode("png"));
   downloadSVGBtn.addEventListener("click", () => downloadQRCode("svg"));
 
-  // infoToggle.addEventListener('click', () => {
-  //     infoContent.style.display = infoContent.style.display === 'none' ? 'block' : 'none';
-  //     infoToggle.textContent = infoContent.style.display === 'none' ? 'ℹ️ How it works (click to expand)' : 'ℹ️ How it works (click to collapse)';
-  // });
-
-  // debugToggle.addEventListener('click', () => {
-  //     vCardText.style.display = vCardText.style.display === 'none' ? 'block' : 'none';
-  //     debugToggle.textContent = vCardText.style.display === 'none' ? '🐞 Debug Mode (click to toggle)' : '🐞 Debug Mode (click to hide)';
-  // });
-  // Replace the existing event listeners for infoToggle and debugToggle with these:
-
   infoToggle.addEventListener("click", () => {
     infoContent.style.display =
       infoContent.style.display === "none" ? "block" : "none";
@@ -192,6 +181,12 @@ document.addEventListener("DOMContentLoaded", () => {
             y += 22;
           }
         });
+
+        // Add watermark
+        ctx.font = '12px Consolas, "Courier New", monospace';
+        ctx.fillStyle = "#222"; // Dark but not black
+        ctx.textAlign = "right";
+        ctx.fillText("cardqr.me", currentSize - 2, currentSize + TEXT_HEIGHT - 2); // Position at bottom right with 6px padding        
 
         // Replace old canvas with new one
         qrcodeDiv.innerHTML = "";
