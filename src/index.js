@@ -38,12 +38,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const debugToggle = document.getElementById("debugToggle");
   const colorToggle = document.getElementById("colorToggle");
   const colorContent = document.getElementById("colorContent");
-  const colorSchemes = document.querySelectorAll(".color-scheme");
+  const colorSchemesContainer = document.querySelector('.color-schemes');
 
   const QR_SIZE = getOptimalQRSize();
   const PADDING = 16; // 1rem padding on each side
-  let QR_BACKGROUND_COLOR = "#f0f0f0";
-  let QR_FOREGROUND_COLOR = "#4a0e4e";
+
+  // Default colors
+  const DEFAULT_COLORS = {
+    regular: {
+      bg: "#f0f0f0",
+      fg: "#4a0e4e"
+    },
+    progressive: {
+      green: { name: "Zaļais", bg: "#f0f7f5", fg: "#00816d" },
+      red: { name: "Sarkanais", bg: "#eee", fg: "#f93822" },
+      greenwhite: { name: "Balts", bg: "#00816d", fg: "#eee" }
+    }
+  };
+
+  // Check for progressive mode
+  const urlParams = new URLSearchParams(window.location.search);
+  const isProgressiveMode = urlParams.has('progresivie');
+
+  // Set initial colors based on mode
+  let QR_BACKGROUND_COLOR = isProgressiveMode
+    ? DEFAULT_COLORS.progressive.green.bg
+    : DEFAULT_COLORS.regular.bg;
+  let QR_FOREGROUND_COLOR = isProgressiveMode
+    ? DEFAULT_COLORS.progressive.green.fg
+    : DEFAULT_COLORS.regular.fg;
   let currentQRText = "";
 
   // Create empty canvas on page load
@@ -91,8 +114,42 @@ document.addEventListener("DOMContentLoaded", () => {
       defaultScheme.classList.add("active");
     }
   };
-  setInitialActiveScheme();
 
+
+  if (isProgressiveMode) {
+    orgInput.value = 'Progresīvie';
+    colorContent.style.display = 'block';
+    // Clear existing schemes only in progressive mode
+    colorSchemesContainer.innerHTML = '';
+
+
+    // Add progressive schemes by iterating over keys
+    Object.keys(DEFAULT_COLORS.progressive).forEach(key => {
+      const scheme = DEFAULT_COLORS.progressive[key];
+      const div = document.createElement('div');
+      div.className = 'color-scheme';
+      div.dataset.bg = scheme.bg;
+      div.dataset.fg = scheme.fg;
+      if (scheme.bg === QR_BACKGROUND_COLOR && scheme.fg === QR_FOREGROUND_COLOR) {
+        div.classList.add('active');
+      }
+
+      div.innerHTML = `
+          <div class="color-preview">
+              <div class="color-circle" style="background-color: ${scheme.fg}"></div>
+          </div>
+          <span>${scheme.name}</span>
+      `;
+
+      colorSchemesContainer.appendChild(div);
+    });
+
+  } else {
+    // Regular mode - just set active state on default scheme
+    setInitialActiveScheme();
+  }
+
+  const colorSchemes = document.querySelectorAll(".color-scheme");
   // Handle color scheme selection
   colorSchemes.forEach(scheme => {
     scheme.addEventListener("click", () => {
