@@ -5,6 +5,7 @@ import './assets/web-app-manifest-512x512.png';
 import './assets/site.webmanifest';
 import './assets/logo.svg';
 import './assets/CardQR.me.png';
+import './assets/CardQR.meX.png';
 
 import QRCode from "qrcode";
 import latinize from 'latinize';
