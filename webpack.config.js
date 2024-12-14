@@ -34,7 +34,6 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: './src/index.html',
-            favicon: path.resolve(__dirname, 'src/assets/favicon.ico'),
             minify: {
                 collapseWhitespace: true,
                 removeComments: true,
