@@ -27,7 +27,8 @@
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
         <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
         <link rel="manifest" href="assets/site.webmanifest">
-        <meta name="theme-color" content="#4a0e4e">        
+        <meta name="theme-color" content="#4a0e4e">
+        <script defer data-domain="cardqr.me" src="https://stats.zenomy.tech/js/script.tagged-events.js"></script>
     </head>
 
     <body>
@@ -150,8 +151,8 @@
 
             <div class="qr-container">
                 <div class="button-group">
-                    <button id="downloadPNG" disabled>Download PNG</button>
-                    <button id="downloadSVG" disabled>Download SVG</button>
+                    <button class="plausible-event-name=download-png" id="downloadPNG" disabled>Download PNG</button>
+                    <button class="plausible-event-name=download-svg" id="downloadSVG" disabled>Download SVG</button>
                 </div>
                 <div id="qrcode"></div>
             </div>
