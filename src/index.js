@@ -1,20 +1,18 @@
-import './assets/favicon.ico';
-import './assets/apple-touch-icon.png';
-import './assets/web-app-manifest-192x192.png';
-import './assets/web-app-manifest-512x512.png';
-import './assets/site.webmanifest';
-import './assets/logo.svg';
-import './assets/CardQR.me.png';
-import './assets/CardQR.meX.png';
+import "./assets/favicon.ico";
+import "./assets/apple-touch-icon.png";
+import "./assets/web-app-manifest-192x192.png";
+import "./assets/web-app-manifest-512x512.png";
+import "./assets/site.webmanifest";
+import "./assets/logo.svg";
+import "./assets/CardQR.me.png";
+import "./assets/CardQR.meX.png";
 
 import QRCode from "qrcode";
-import latinize from 'latinize';
+import latinize from "latinize";
 
-import './styles.css';
-
+import "./styles.css";
 
 document.addEventListener("DOMContentLoaded", () => {
-
   function getOptimalQRSize() {
     const screenWidth = window.innerWidth;
     // For mobile devices, make QR code smaller
@@ -24,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return 400; // default size for larger screens
   }
 
-  const nameInput = document.getElementById("nameInput");
+  const firstNameInput = document.getElementById("firstNameInput");
+  const lastNameInput = document.getElementById("lastNameInput");
   const phoneInput = document.getElementById("phoneInput");
   const emailInput = document.getElementById("emailInput");
   const orgInput = document.getElementById("orgInput");
@@ -40,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const debugToggle = document.getElementById("debugToggle");
   const colorToggle = document.getElementById("colorToggle");
   const colorContent = document.getElementById("colorContent");
-  const colorSchemesContainer = document.querySelector('.color-schemes');
+  const colorSchemesContainer = document.querySelector(".color-schemes");
 
   const QR_SIZE = getOptimalQRSize();
   const PADDING = 16; // 1rem padding on each side
@@ -49,18 +48,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const DEFAULT_COLORS = {
     regular: {
       bg: "#f0f0f0",
-      fg: "#4a0e4e"
+      fg: "#4a0e4e",
     },
     progressive: {
       green: { name: "Zaļais", bg: "#f0f7f5", fg: "#00816d" },
       red: { name: "Sarkanais", bg: "#eee", fg: "#f93822" },
-      greenwhite: { name: "Balts", bg: "#00816d", fg: "#eee" }
-    }
+      greenwhite: { name: "Balts", bg: "#00816d", fg: "#eee" },
+    },
   };
 
   // Check for progressive mode
   const urlParams = new URLSearchParams(window.location.search);
-  const isProgressiveMode = urlParams.has('progresivie');
+  const isProgressiveMode = urlParams.has("progresivie");
 
   // Set initial colors based on mode
   let QR_BACKGROUND_COLOR = isProgressiveMode
@@ -75,7 +74,14 @@ document.addEventListener("DOMContentLoaded", () => {
   createEmptyCanvas();
 
   // Add event listeners for input fields
-  [nameInput, phoneInput, emailInput, orgInput, titleInput].forEach((input) => {
+  [
+    firstNameInput,
+    lastNameInput,
+    phoneInput,
+    emailInput,
+    orgInput,
+    titleInput,
+  ].forEach((input) => {
     input.addEventListener("input", updateVCardAndQR);
   });
 
@@ -110,30 +116,31 @@ document.addEventListener("DOMContentLoaded", () => {
   // Set initial active color scheme
   const setInitialActiveScheme = () => {
     const defaultScheme = document.querySelector(
-      `.color-scheme[data-bg="${QR_BACKGROUND_COLOR}"][data-fg="${QR_FOREGROUND_COLOR}"]`
+      `.color-scheme[data-bg="${QR_BACKGROUND_COLOR}"][data-fg="${QR_FOREGROUND_COLOR}"]`,
     );
     if (defaultScheme) {
       defaultScheme.classList.add("active");
     }
   };
 
-
   if (isProgressiveMode) {
-    orgInput.value = 'Progresīvie';
-    colorContent.style.display = 'block';
+    orgInput.value = "Progresīvie";
+    colorContent.style.display = "block";
     // Clear existing schemes only in progressive mode
-    colorSchemesContainer.innerHTML = '';
-
+    colorSchemesContainer.innerHTML = "";
 
     // Add progressive schemes by iterating over keys
-    Object.keys(DEFAULT_COLORS.progressive).forEach(key => {
+    Object.keys(DEFAULT_COLORS.progressive).forEach((key) => {
       const scheme = DEFAULT_COLORS.progressive[key];
-      const div = document.createElement('div');
-      div.className = 'color-scheme';
+      const div = document.createElement("div");
+      div.className = "color-scheme";
       div.dataset.bg = scheme.bg;
       div.dataset.fg = scheme.fg;
-      if (scheme.bg === QR_BACKGROUND_COLOR && scheme.fg === QR_FOREGROUND_COLOR) {
-        div.classList.add('active');
+      if (
+        scheme.bg === QR_BACKGROUND_COLOR &&
+        scheme.fg === QR_FOREGROUND_COLOR
+      ) {
+        div.classList.add("active");
       }
 
       div.innerHTML = `
@@ -145,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       colorSchemesContainer.appendChild(div);
     });
-
   } else {
     // Regular mode - just set active state on default scheme
     setInitialActiveScheme();
@@ -153,10 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const colorSchemes = document.querySelectorAll(".color-scheme");
   // Handle color scheme selection
-  colorSchemes.forEach(scheme => {
+  colorSchemes.forEach((scheme) => {
     scheme.addEventListener("click", () => {
       // Remove active class from all schemes
-      colorSchemes.forEach(s => s.classList.remove("active"));
+      colorSchemes.forEach((s) => s.classList.remove("active"));
       // Add active class to selected scheme
       scheme.classList.add("active");
 
@@ -177,22 +183,30 @@ document.addEventListener("DOMContentLoaded", () => {
     // Then sanitize the result
     return latinized
       .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '_')         // Replace spaces with underscores
-      .replace(/-+/g, '_')          // Replace hyphens with underscores
-      .replace(/_+/g, '_')          // Replace multiple underscores with single
+      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
+      .replace(/\s+/g, "_") // Replace spaces with underscores
+      .replace(/-+/g, "_") // Replace hyphens with underscores
+      .replace(/_+/g, "_") // Replace multiple underscores with single
       .trim();
   }
 
+  function getFullName() {
+    const firstName = document.getElementById("firstNameInput").value.trim();
+    const lastName = document.getElementById("lastNameInput").value.trim();
+
+    // Only include parts that are not empty
+    return [firstName, lastName].filter(Boolean).join(" ");
+  }
+
   function generateFileName(format) {
-    const name = nameInput.value.trim();
+    const name = getFullName();
     const org = orgInput.value.trim();
-    let filename = 'qr_code';
+    let filename = "qr_code";
 
     if (name) {
       filename = sanitizeFileName(name);
       if (org) {
-        filename += '_' + sanitizeFileName(org);
+        filename += "_" + sanitizeFileName(org);
       }
     }
 
@@ -218,35 +232,59 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateVCardAndQR() {
-    const name = nameInput.value;
-    const phone = phoneInput.value;
-    const email = emailInput.value;
-    const org = orgInput.value;
-    const title = titleInput.value;
+    const firstName = firstNameInput.value.trim();
+    const lastName = lastNameInput.value.trim();
+    const phone = phoneInput.value.trim();
+    const email = emailInput.value.trim();
+    const org = orgInput.value.trim();
+    const title = titleInput.value.trim();
     const urls = Array.from(urlContainer.querySelectorAll(".urlInput"))
-      .map((input) => input.value)
+      .map((input) => input.value.trim())
       .filter(Boolean);
 
-    let vCardContent = "";
-    if (name) vCardContent += `FN:${name}\n`;
+    // Create formatted name from first and last name components
+    const formattedName = getFullName();
+
+    let vCardContent = "BEGIN:VCARD\nVERSION:3.0\n";
+
+    // Include FN (formatted name) only if we have a name
+    if (formattedName) {
+      vCardContent += `FN:${formattedName}\n`;
+      let primaryFirstName = firstName;
+      let middleName = "";
+      if (firstName && firstName.includes(" ")) {
+        const nameParts = firstName.split(" ");
+        primaryFirstName = nameParts[0]; // First part as primary first name
+        middleName = nameParts.slice(1).join(" "); // Rest as middle name
+      }
+      vCardContent += `N:${lastName || ""};${primaryFirstName || ""};${middleName || ""};;;\n`;
+    }
+
     if (phone) vCardContent += `TEL:${phone}\n`;
     if (email) vCardContent += `EMAIL:${email}\n`;
     if (org) vCardContent += `ORG:${org}\n`;
-    if (title) vCardContent += `TITLE: ${title}\n`;
+    if (title) vCardContent += `TITLE:${title}\n`;
+
+    // Add URLs (possibly shortening them to save space)
     urls.forEach((url) => {
-      vCardContent += `URL:${url}\n`;
+      // Consider stripping http:// or https:// if the URL will work without it
+      const cleanUrl = url.replace(/^https?:\/\//, "");
+      vCardContent += `URL:${cleanUrl}\n`;
     });
 
-    if (vCardContent) {
-      vCardContent = "BEGIN:VCARD\nVERSION:3.0\n" + vCardContent + "END:VCARD";
+    vCardContent += "END:VCARD";
+
+    // Only generate QR code if we have actual content
+    if (formattedName || phone || email || org) {
       vCardText.value = vCardContent;
       currentQRText = vCardContent;
       generateQRCode(currentQRText);
       enableDownloadButtons(true);
     } else {
-      enableDownloadButtons(false);
+      vCardText.value = "";
       currentQRText = "";
       createEmptyCanvas();
+      enableDownloadButtons(false);
     }
   }
 
@@ -255,8 +293,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const TEXT_HEIGHT = 130; // Space for contact text
     const currentSize = getOptimalQRSize();
     // Include padding in canvas dimensions
-    canvas.width = currentSize + (PADDING * 2);
-    canvas.height = currentSize + TEXT_HEIGHT + (PADDING * 2);
+    canvas.width = currentSize + PADDING * 2;
+    canvas.height = currentSize + TEXT_HEIGHT + PADDING * 2;
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = QR_BACKGROUND_COLOR;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -266,7 +304,7 @@ document.addEventListener("DOMContentLoaded", () => {
     qrcodeDiv.style.height = `${currentSize + TEXT_HEIGHT + PADDING * 2}px`;
     qrcodeDiv.style.backgroundColor = QR_BACKGROUND_COLOR;
     // Remove padding from container since it's now part of the canvas
-    qrcodeDiv.style.padding = '0';
+    qrcodeDiv.style.padding = "0";
   }
 
   function generateQRCode(text) {
@@ -292,8 +330,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Create final canvas
         const finalCanvas = document.createElement("canvas");
-        finalCanvas.width = currentSize + (PADDING * 2);
-        finalCanvas.height = currentSize + TEXT_HEIGHT + (PADDING * 2);
+        finalCanvas.width = currentSize + PADDING * 2;
+        finalCanvas.height = currentSize + TEXT_HEIGHT + PADDING * 2;
         const ctx = finalCanvas.getContext("2d");
 
         // Draw background
@@ -306,9 +344,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Draw text
         ctx.fillStyle = QR_FOREGROUND_COLOR;
         ctx.textAlign = "center";
-        let y = currentSize + (PADDING * 2);
+        let y = currentSize + PADDING * 2;
 
-        const name = nameInput.value;
+        const name = getFullName();
         if (name) {
           ctx.font = "bold 18px Arial";
           ctx.fillText(name, finalCanvas.width / 2, y + 16);
@@ -337,14 +375,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Draw logo
         //const logoImg = new Image();
-        fetch('assets/logo.svg')
-          .then(response => response.text())
-          .then(svgText => {
+        fetch("assets/logo.svg")
+          .then((response) => response.text())
+          .then((svgText) => {
             // Replace the color variable
-            const coloredSvg = svgText.replace('currentColor', QR_FOREGROUND_COLOR);
+            const coloredSvg = svgText.replace(
+              "currentColor",
+              QR_FOREGROUND_COLOR,
+            );
 
             // Create a Blob with the modified SVG
-            const blob = new Blob([coloredSvg], { type: 'image/svg+xml' });
+            const blob = new Blob([coloredSvg], { type: "image/svg+xml" });
             const url = URL.createObjectURL(blob);
 
             const logoImg = new Image();
@@ -353,7 +394,13 @@ document.addEventListener("DOMContentLoaded", () => {
               const spacing = 2;
               const textY = finalCanvas.height - PADDING;
               const logoY = textY - logoSize + 5;
-              const logoX = finalCanvas.width - PADDING - 2 - ctx.measureText("cardqr.me").width - logoSize - spacing;
+              const logoX =
+                finalCanvas.width -
+                PADDING -
+                2 -
+                ctx.measureText("cardqr.me").width -
+                logoSize -
+                spacing;
 
               ctx.fillStyle = QR_FOREGROUND_COLOR;
               ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
@@ -365,12 +412,12 @@ document.addEventListener("DOMContentLoaded", () => {
             };
             logoImg.src = url;
           })
-          .catch(error => console.error('Error loading logo:', error));
+          .catch((error) => console.error("Error loading logo:", error));
 
         // Replace old canvas with new one
         qrcodeDiv.innerHTML = "";
         qrcodeDiv.appendChild(finalCanvas);
-      }
+      },
     );
   }
 
@@ -415,7 +462,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const url = URL.createObjectURL(blob);
           downloadFile(url, filename);
           URL.revokeObjectURL(url);
-        }
+        },
       );
     }
   }

@@ -40,6 +40,16 @@ h3 {
     margin-top: 0.5rem;
     width: 100%;
 }
+.name-fields {
+    display: flex;
+    gap: 10px;
+    width: 95%;
+}
+
+.name-fields input {
+    flex: 1;
+    width: 100%; /* Ensures inputs take equal space */
+}
 
 input[type="text"],
 input[type="tel"],
